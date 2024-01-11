@@ -1,4 +1,5 @@
 const Usuario = require("../models/Usuario");
+const usuarioCU = require("../CasoDeUsos/usuarioCasoDeUso")
 
 exports.crearUsuario = async (req, res) => {
     try {
@@ -10,17 +11,6 @@ exports.crearUsuario = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send("Error creando el usuario");
-    }
-}
-
-exports.obtenerUsuarios = async (req, res) => {
-    try {
-        const usuarios = await Usuario.find();
-        res.json(usuarios);
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Error obteniendo los usuario");
     }
 }
 
@@ -72,16 +62,11 @@ exports.ObtenerUsuarioPorId = async (req, res) => {
 exports.EliminarUsuarioPorId = async (req, res) => {
 
     try {
-        let usuario = await Usuario.findById(req.params.id);
+        let estado = await usuarioCU.EliminarUsuarioPorId(req.params.id);
 
-        if(!usuario) {
-            res.status(404).json({msg: 'No existe el usuario'});
-            res.setHeader('Content-Type', 'text/html');
-        }
-
-        await Usuario.findOneAndDelete({ _id: req.params.id });
-
-        res.json({ msg: 'Usuario eliminado con éxito' });
+        estado 
+            ? res.json({msg: "Usuario eliminado con éxito"}) 
+            : res.status(404).json({msg: 'No existe el usuario'});
 
     } catch (error) {
         console.log(error);

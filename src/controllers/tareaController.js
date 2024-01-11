@@ -20,13 +20,31 @@ exports.CrearTarea = async (req, res) => {
 }
 
 exports.EliminarTarea = async (req, res) => {
-    await Tarea.findOneAndDelete({ _id: req.params.id });
-    res.json({ msg: 'Tarea eliminada con éxito'});
+
+    try {
+        let tarea = await Tarea.findById(req.params.id)
+         
+        if(!tarea)
+            res.status(404).json({msg: 'No existe la tarea.'});
+
+        await Tarea.findOneAndDelete({_id: req.params.id});
+
+        res.json({msg: 'Tarea eliminada con éxito'});
+
+    }catch(error){
+        console.log(error);
+        res.status(500).send(`Error eliminando usuario con id: ${req.params.id}`);
+    }
 }
 
 exports.ObtenerTareasPorIdUsuario = async (req, res) => {
 
     try {
+        let usuario = await Usuario.findById(req.params.id);
+
+        if(!usuario)
+            res.status(404).json({msg: 'No existe el usuario'});9
+
         let tareas = await Tarea.find({ idPropietario: req.params.id});
 
         if(!tareas.length > 0) {
